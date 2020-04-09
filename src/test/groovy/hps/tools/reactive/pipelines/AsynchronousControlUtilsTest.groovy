@@ -4,15 +4,15 @@
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *
+ *  
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ *  
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
+ *  
  */
 
 package hps.tools.reactive.pipelines
@@ -23,7 +23,7 @@ class AsynchronousControlUtilsTest extends Specification {
 
     def "Execute a pipeline keeping tasks order"() {
         given:
-        def service = Spy(SampleServiceImpl)
+        def service = Spy(SampleService)
         SamplePipeline samplePipeline = new SamplePipeline(service)
 
         when: 'sequentialWorkflow is called'
@@ -46,11 +46,6 @@ class AsynchronousControlUtilsTest extends Specification {
         0 * service./.*/
         responseContext.succeed
 
-        then: 'all tasks are executed in the same thread'
-        responseContext.get('asyncTask1') == responseContext.get('failFast')
-        responseContext.get('asyncTask1') == responseContext.get('asyncTask2')
-        responseContext.get('asyncTask1') == responseContext.get('syncTask')
-
         when: 'sequentialWorkflow is called with `fail`'
         sampleContext.reset()
         sampleContext.put('fail', true)
@@ -67,7 +62,7 @@ class AsynchronousControlUtilsTest extends Specification {
 
     def "Execute a parallelized pipeline"() {
         given:
-        def service = Spy(SampleServiceImpl)
+        def service = Spy(SampleService)
         SamplePipeline samplePipeline = new SamplePipeline(service)
 
         when: 'sequentialWorkflow is called'
@@ -103,7 +98,7 @@ class AsynchronousControlUtilsTest extends Specification {
 
     def "Execute a composite pipeline"() {
         given:
-        def service = Spy(SampleServiceImpl)
+        def service = Spy(SampleService)
         SamplePipeline samplePipeline = new SamplePipeline(service)
 
         when: 'composite workflow is called'
@@ -113,21 +108,17 @@ class AsynchronousControlUtilsTest extends Specification {
         then: '1) asyncTask1 is called'
         1 * service.asyncTask1(_)
 
-        then: '2) asyncTask3 is called'
-        1 * service.asyncTask3(_)
-
         then: '3) failFast is called'
         1 * service.failFast(_)
 
-        then: '4) asyncTask4 is called'
-        1 * service.asyncTask4(_)
+        then: '2) asyncTask3 is called'
+        1 * service.asyncTask3(_)
+
+        then: '4) asyncCompositeFinal is called after other'
+        1 * service.asyncCompositeFinal(_)
 
         then: 'workflow complete successfully'
         responseContext.succeed
-
-        then: 'sequential tasks are executed in the same thread'
-        responseContext.get('asyncTask3') == responseContext.get('failFast')
-        responseContext.get('asyncTask3') == responseContext.get('asyncTask4')
 
         then: 'parallel tasks are executed in differents threads'
         responseContext.get('asyncTask2') != responseContext.get('asyncTask3')
@@ -141,9 +132,9 @@ class AsynchronousControlUtilsTest extends Specification {
 
         then: 'workflow failed after the asyncTask3'
         1 * service.asyncTask1(_)
-        1 * service.asyncTask3(_)
         1 * service.failFast(_)
-        0 * service.asyncTask4(_)
+        0 * service.asyncTask3(_)
+        0 * service.asyncCompositeFinal(_)
         !responseContext.succeed
     }
 

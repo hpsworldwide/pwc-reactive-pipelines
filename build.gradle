@@ -18,6 +18,7 @@
 plugins {
     id 'java-library'
     id 'groovy'
+    id 'maven-publish'
 }
 
 repositories {
@@ -26,9 +27,50 @@ repositories {
 
 dependencies {
     api group: 'io.projectreactor', name: 'reactor-core', version: reactorCoreVersion
-//    testImplementation group: 'junit', name: 'junit', version: junitVersion
     testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: commonsVersion
     testImplementation group: 'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion
     testImplementation group: 'org.spockframework', name: 'spock-core', version: spockVersion
     testRuntime "net.bytebuddy:byte-buddy:1.9.3"
 }
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = "sources"
+}
+
+publishing {
+    publications {
+        reactivePipelineLibrary(MavenPublication) {
+            from components.java
+            artifact sourceJar
+            pom {
+                name = "Reactive pipeline"
+                description = "A reactive pipline utility for Reactor"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                scm {
+                    connection = 'https://github.com/hpsworldwide/reactive-pipeline'
+                    url = 'https://www.hps-worldwide.com/'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username hpsRepositoryLogin
+                password hpsRepositoryPassword
+            }
+            if (project.version.endsWith('-SNAPSHOT')) {
+                url hpsSnapshotRepository
+            } else {
+                url hpsRepository
+            }
+        }
+    }
+}
+
