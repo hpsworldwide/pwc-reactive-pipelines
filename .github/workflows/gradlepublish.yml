@@ -21,4 +21,4 @@ jobs:
       - name: Build with Gradle
         run: gradle build
       - name: Publish to GitHub Packages
-        run: gradle publish -Dbintray.user=${{ BINTRAY_USER }} -Dbintray.key=${{ BINTRAY_TOKEN }}
+        run: gradle bintrayUpload -Dbintray.user=${{ BINTRAY_USER }} -Dbintray.key=${{ BINTRAY_TOKEN }}
