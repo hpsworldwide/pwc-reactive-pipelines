@@ -26,6 +26,6 @@ import reactor.core.publisher.Mono;
  *
  * @param <T>
  */
-public interface AsyncControl<T extends PipelineContext> {
+public interface PipelineStep<T extends PipelineContext> {
     Mono<T> execute(T controlContext);
 }

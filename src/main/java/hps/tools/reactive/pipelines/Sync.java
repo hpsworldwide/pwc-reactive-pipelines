@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono;
  *
  * @param <T>
  */
-public interface Sync<T extends PipelineContext> extends AsyncControl<T> {
+public interface Sync<T extends PipelineContext> extends PipelineStep<T> {
 
     T executeSyncronously(T controlContext);
 

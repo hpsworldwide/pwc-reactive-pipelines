@@ -19,7 +19,7 @@ package hps.tools.reactive.pipelines
 
 import spock.lang.Specification
 
-class AsynchronousControlUtilsTest extends Specification {
+class PipelineUtilsTest extends Specification {
 
     def "Execute a pipeline keeping tasks order"() {
         given:
@@ -27,7 +27,7 @@ class AsynchronousControlUtilsTest extends Specification {
         SamplePipeline samplePipeline = new SamplePipeline(service)
 
         when: 'sequentialWorkflow is called'
-        def sampleContext = new SampleContext()
+        def sampleContext = new SimpleContext()
         def responseContext = samplePipeline.sequentialWorkflow(sampleContext).block()
 
         then: '1) asyncTask1 is called'
@@ -66,7 +66,7 @@ class AsynchronousControlUtilsTest extends Specification {
         SamplePipeline samplePipeline = new SamplePipeline(service)
 
         when: 'sequentialWorkflow is called'
-        def sampleContext = new SampleContext()
+        def sampleContext = new SimpleContext()
         def responseContext = samplePipeline.parallelWorkflow(sampleContext).block()
 
         then: 'all tasks are called in any order'
@@ -102,7 +102,7 @@ class AsynchronousControlUtilsTest extends Specification {
         SamplePipeline samplePipeline = new SamplePipeline(service)
 
         when: 'composite workflow is called'
-        def sampleContext = new SampleContext()
+        def sampleContext = new SimpleContext()
         def responseContext = samplePipeline.compositeWorkflow(sampleContext).block()
 
         then: '1) asyncTask1 is called'

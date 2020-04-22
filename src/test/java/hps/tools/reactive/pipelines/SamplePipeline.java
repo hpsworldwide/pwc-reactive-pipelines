@@ -19,8 +19,8 @@ package hps.tools.reactive.pipelines;
 
 import reactor.core.publisher.Mono;
 
-import static hps.tools.reactive.pipelines.AsynchronousControlUtils.parallelize;
-import static hps.tools.reactive.pipelines.AsynchronousControlUtils.pipeline;
+import static hps.tools.reactive.pipelines.PipelineUtils.parallelize;
+import static hps.tools.reactive.pipelines.PipelineUtils.pipeline;
 
 /**
  * Examples of pipelines
@@ -33,36 +33,36 @@ public class SamplePipeline {
         this.service = service;
     }
 
-    public Mono<SampleContext> sequentialWorkflow(SampleContext controlContext) {
+    public Mono<SimpleContext> sequentialWorkflow(SimpleContext controlContext) {
         return pipeline(
                 // is equivalent to
                 // controlContext -> service.asyncTask(controlContext)
                 service::asyncTask1,
-                (Sync<SampleContext>) service::failFast,
+                (Sync<SimpleContext>) service::failFast,
                 service::asyncTask2,
-                (Sync<SampleContext>) service::syncTask
+                (Sync<SimpleContext>) service::syncTask
         ).execute(controlContext);
     }
 
-    public Mono<SampleContext> parallelWorkflow(SampleContext controlContext) {
+    public Mono<SimpleContext> parallelWorkflow(SimpleContext controlContext) {
         return parallelize(
                 service::asyncTask1,
-                (Sync<SampleContext>) service::failFast,
+                (Sync<SimpleContext>) service::failFast,
                 service::asyncTask2bis,
-                (Sync<SampleContext>) service::syncTask
+                (Sync<SimpleContext>) service::syncTask
         ).execute(controlContext);
     }
 
-    public Mono<SampleContext> compositeWorkflow(SampleContext controlContext) {
+    public Mono<SimpleContext> compositeWorkflow(SimpleContext controlContext) {
         return pipeline(
                 service::asyncTask1,
                 parallelize(
                     service::asyncTask2,
                     pipeline(
-                        (Sync<SampleContext>) service::failFast,
+                        (Sync<SimpleContext>) service::failFast,
                         service::asyncTask3
                     ),
-                    (Sync<SampleContext>) service::syncTask
+                    (Sync<SimpleContext>) service::syncTask
                 ),
                 service::asyncCompositeFinal
         ).execute(controlContext);

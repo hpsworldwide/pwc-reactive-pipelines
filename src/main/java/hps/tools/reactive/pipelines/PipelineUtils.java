@@ -25,7 +25,7 @@ import reactor.core.scheduler.Schedulers;
 /**
  * Utils method for asynchronous pipelines
  */
-public class AsynchronousControlUtils {
+public class PipelineUtils {
 
     /**
      * Execute the given controls in parallel.
@@ -39,9 +39,9 @@ public class AsynchronousControlUtils {
      * @param controls : unordered list of control
      * @return a flux of controlResults
      */
-    public static <T extends PipelineContext> AsyncControl<T> parallelize(AsyncControl<T>...controls) {
-        final Flux<AsyncControl<T>> resultFlux = Flux.fromArray(controls);
-        final ParallelFlux<AsyncControl<T>> controlParallelFlux = resultFlux.parallel().runOn(Schedulers.elastic());
+    public static <T extends PipelineContext> PipelineStep<T> parallelize(PipelineStep<T>...controls) {
+        final Flux<PipelineStep<T>> resultFlux = Flux.fromArray(controls);
+        final ParallelFlux<PipelineStep<T>> controlParallelFlux = resultFlux.parallel().runOn(Schedulers.elastic());
         return initialContext -> controlParallelFlux
                 //Parallel result flux
                 .concatMap(control -> control.execute(initialContext))
@@ -66,8 +66,8 @@ public class AsynchronousControlUtils {
      * @param controls : ordered list of control
      * @return a flux of controlResults
      */
-    public static <T extends PipelineContext> AsyncControl<T> pipeline(AsyncControl<T>...controls) {
-        final Flux<AsyncControl<T>> controlFlux = Flux.fromArray(controls);
+    public static <T extends PipelineContext> PipelineStep<T> pipeline(PipelineStep<T>...controls) {
+        final Flux<PipelineStep<T>> controlFlux = Flux.fromArray(controls);
         return initialContext -> controlFlux
                 //Result flux
                 .concatMap(control -> control.execute(initialContext))
@@ -79,7 +79,7 @@ public class AsynchronousControlUtils {
                 .switchIfEmpty(Mono.just(initialContext));
     }
 
-    private AsynchronousControlUtils() {
+    private PipelineUtils() {
         //Do not instanciate
     }
 }

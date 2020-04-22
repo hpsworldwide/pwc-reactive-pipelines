@@ -26,106 +26,106 @@ public class SampleService {
 
     /**
      * This method fails if the context contains the key/value "fail=true"
-     * @param sampleContext
+     * @param simpleContext
      * @return
      */
-    public SampleContext failFast(SampleContext sampleContext) {
-        sampleContext.put("failFast", getCurrentThreadName());
-        boolean fail = Boolean.TRUE.equals(sampleContext.get("fail"));
+    public SimpleContext failFast(SimpleContext simpleContext) {
+        simpleContext.put("failFast", getCurrentThreadName());
+        boolean fail = Boolean.TRUE.equals(simpleContext.get("fail"));
         if(fail) {
             //do not optimize code here, because of threadsafe behaviour
-            sampleContext.setSucceed(false);
+            simpleContext.setSucceed(false);
         }
-        return sampleContext;
+        return simpleContext;
     }
 
     /**
      * An example of procedural method
-     * @param sampleContext
+     * @param simpleContext
      * @return
      */
-    public SampleContext syncTask(SampleContext sampleContext) {
-        sampleContext.put("syncTask", getCurrentThreadName());
-        return sampleContext;
+    public SimpleContext syncTask(SimpleContext simpleContext) {
+        simpleContext.put("syncTask", getCurrentThreadName());
+        return simpleContext;
     }
 
     /**
      * An example of async task
-     * @param sampleContext
+     * @param simpleContext
      * @return
      */
-    public Mono<SampleContext> asyncTask1(SampleContext sampleContext) {
-        return simulateAsyncProcess("asyncTask1", sampleContext);
+    public Mono<SimpleContext> asyncTask1(SimpleContext simpleContext) {
+        return simulateAsyncProcess("asyncTask1", simpleContext);
     }
 
     /**
      * An example of async task
-     * @param sampleContext
+     * @param simpleContext
      * @return
      */
-    public Mono<SampleContext> asyncTask2(SampleContext sampleContext) {
-        return simulateAsyncProcess("asyncTask2", sampleContext);
+    public Mono<SimpleContext> asyncTask2(SimpleContext simpleContext) {
+        return simulateAsyncProcess("asyncTask2", simpleContext);
     }
 
     /**
      * An example of async task that depends on a previous task1
-     * @param sampleContext
+     * @param simpleContext
      * @return
      */
-    public Mono<SampleContext> asyncTask2bis(SampleContext sampleContext) {
-        return simulateAsyncProcess("asyncTask2bis", sampleContext)
+    public Mono<SimpleContext> asyncTask2bis(SimpleContext simpleContext) {
+        return simulateAsyncProcess("asyncTask2bis", simpleContext)
                 .map(context -> {
                     if(context.get("asyncTask1") == null) {
-                        sampleContext.failFast();
+                        simpleContext.failFast();
                     }
-                    return sampleContext;
+                    return simpleContext;
                 });
     }
 
     /**
      * An example of async task
-     * @param sampleContext
+     * @param simpleContext
      * @return
      */
-    public Mono<SampleContext> asyncTask3(SampleContext sampleContext) {
-        return simulateAsyncProcess("asyncTask3", sampleContext);
+    public Mono<SimpleContext> asyncTask3(SimpleContext simpleContext) {
+        return simulateAsyncProcess("asyncTask3", simpleContext);
     }
 
     /**
      * An example of async task that depends on a previous task3
-     * @param sampleContext
+     * @param simpleContext
      * @return
      */
-    public Mono<SampleContext> asyncCompositeFinal(SampleContext sampleContext) {
+    public Mono<SimpleContext> asyncCompositeFinal(SimpleContext simpleContext) {
         StringBuilder orderProblem = new StringBuilder();
-        if(sampleContext.get("asyncTask1") == null) {
+        if(simpleContext.get("asyncTask1") == null) {
             orderProblem.append("asyncTask1\n");
         }
-        if(sampleContext.get("asyncTask2") == null) {
+        if(simpleContext.get("asyncTask2") == null) {
             orderProblem.append("asyncTask2\n");
         }
-        if(sampleContext.get("asyncTask3") == null) {
+        if(simpleContext.get("asyncTask3") == null) {
             orderProblem.append("asyncTask3\n");
         }
-        if(sampleContext.get("failFast") == null) {
+        if(simpleContext.get("failFast") == null) {
             orderProblem.append("failFast\n");
         }
-        if(sampleContext.get("syncTask") == null) {
+        if(simpleContext.get("syncTask") == null) {
             orderProblem.append("syncTask\n");
         }
         if(orderProblem.length() > 0) {
 // TODO           throw new RuntimeException(getCurrentThreadName() + ": Missing following steps before final step : \n" + orderProblem.toString());
         }
-        return simulateAsyncProcess("asyncCompositeFinal", sampleContext);
+        return simulateAsyncProcess("asyncCompositeFinal", simpleContext);
     }
 
-    private Mono<SampleContext> simulateAsyncProcess(String methodName, SampleContext sampleContext) {
+    private Mono<SimpleContext> simulateAsyncProcess(String methodName, SimpleContext simpleContext) {
         //simulate a random latency between 1 to 50 milliseconds
         final int fakeLatency = RandomUtils.nextInt(1, 50);
         return Mono.fromCallable(() -> {
             //write the thread name in the context with the method name's key
-            sampleContext.put(methodName, getCurrentThreadName());
-            return sampleContext;
+            simpleContext.put(methodName, getCurrentThreadName());
+            return simpleContext;
         }).delayElement(Duration.ofMillis(fakeLatency));
     }
 

@@ -19,7 +19,7 @@ package hps.tools.reactive.pipelines;
 
 /**
  * The pipeline context to store some data shared between tasks
- * All the fields has to be threadsafe {@link hps.tools.reactive.pipelines.SampleContext}
+ * All the fields has to be threadsafe {@link SimpleContext}
  */
 public interface PipelineContext {
     /**

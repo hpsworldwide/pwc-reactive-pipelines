@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Simple threadSafe pipeline context implementation
  */
-public class SampleContext implements PipelineContext {
+public class SimpleContext implements PipelineContext {
 
     private final Map<String, Object> payload = new ConcurrentHashMap<>();
 
