@@ -84,7 +84,6 @@ class PipelineUtilsTest extends Specification {
         responseContext.get('asyncTask1') != responseContext.get('asyncTask2bis')
         responseContext.get('asyncTask1') != responseContext.get('syncTask')
         responseContext.get('failFast') != responseContext.get('asyncTask2bis')
-        responseContext.get('failFast') != responseContext.get('syncTask')
         responseContext.get('asyncTask2bis') != responseContext.get('syncTask')
 
         when: 'sequentialWorkflow is called with `fail`'
@@ -93,7 +92,7 @@ class PipelineUtilsTest extends Specification {
         responseContext = samplePipeline.sequentialWorkflow(sampleContext).block()
 
         then: 'workflow has failed has fast as possible'
-        !sampleContext.getSucceed()
+        !responseContext.getSucceed()
     }
 
     def "Execute a composite pipeline"() {
