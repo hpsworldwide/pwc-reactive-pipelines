@@ -16,6 +16,7 @@
  */
 
 plugins {
+    id "com.jfrog.bintray" version "1.8.5"
     id 'java-library'
     id 'groovy'
     id 'maven-publish'
@@ -45,7 +46,7 @@ publishing {
             artifact sourceJar
             pom {
                 name = "Reactive pipeline"
-                description = "A reactive pipline utility for Reactor"
+                description = "$description"
                 licenses {
                     license {
                         name = "The Apache License, Version 2.0"
@@ -59,18 +60,25 @@ publishing {
             }
         }
     }
-    repositories {
-        maven {
-            credentials {
-                username hpsRepositoryLogin
-                password hpsRepositoryPassword
-            }
-            if (project.version.endsWith('-SNAPSHOT')) {
-                url hpsSnapshotRepository
-            } else {
-                url hpsRepository
+    bintray {
+        user = System.getProperty('bintray.user')
+        key = System.getProperty('bintray.key')
+        publications = ['reactivePipelineLibrary']
+        publish = true
+
+        pkg {
+            repo = 'hps-tools'
+            name = 'reactive-pipelines'
+            userOrg = 'hps-worldwide'
+            licenses = ['Apache-2.0']
+            vcsUrl = 'https://github.com/hpsworldwide/reactive-pipeline.git'
+            version {
+                name = version
+                desc = description
+                released  = new Date()
             }
         }
+
     }
 }
 
