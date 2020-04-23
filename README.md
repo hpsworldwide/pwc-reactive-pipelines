@@ -191,7 +191,7 @@ pipeline(
 
 ## Create a pipeline context
 
-A pipeline context is an object that implements [PipelineContext](hps.tools.reactive.pipelines.PipelineContext).
+A pipeline context is an object that implements [PipelineContext](src/main/java/hps/tools/reactive/pipelines/PipelineContext.java).
 
 The `failFast()` method is used to brake the pipeline when a step finishes by returning 'false' to this method. 
 
