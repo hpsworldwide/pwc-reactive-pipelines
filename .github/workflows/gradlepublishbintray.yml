@@ -1,11 +1,8 @@
-# This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
-# For more information see: https://github.com/actions/setup-java#publishing-using-gradle
-
 name: Gradle Package to Bintray
 
 on:
   release:
-    types: [created]
+    types: [created, gpublished]
 
 jobs:
   build:
@@ -25,5 +22,5 @@ jobs:
       run: gradle build
 
     - name: Publish to Bintray
-      run: gradle bintrayUpload -Dbintray.user=${{ BINTRAY_USER }} -Dbintray.key=${{ BINTRAY_TOKEN }}
+      run: gradle bintrayUpload -Dbintray.user=${{ secrets.BINTRAY_USER }} -Dbintray.key=${{ secrets.BINTRAY_TOKEN }}
 
