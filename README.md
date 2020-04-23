@@ -3,7 +3,7 @@
 
 ## Overview
 
-Well, Reactor 3 is awful, but you just want to write a pipeline like this : 
+Well, Reactor 3 is awesome, but maybe you want to write a pipeline like this : 
 
 ```java
     pipeline (
@@ -15,21 +15,21 @@ Well, Reactor 3 is awful, but you just want to write a pipeline like this :
     //and some more code describing steps...
 ```
 
-That means `step2` will be executed after `step1` completes, and then `step3` will "wait" that `step2` completes to start.
+It means that `step2` will be executed after `step1` completes, and then `step3` will "wait" that `step2` completes to start.
 
-And you want this be done by a performant non-blocking way (no `Mono.block()` or async/await pattern with `CountDownLatch`).
+And you want this to be done in a performant non-blocking way (no `Mono.block()` or async/await pattern with `CountDownLatch`) ?
 
-That's what Reactive Pipeline do.
+Lucky you, that's what Reactive Pipeline do.
 
 You can see examples in [SamplePipeline](src/test/java/hps/tools/reactive/pipelines/SamplePipeline.java).
 
 ## Getting started
 
-* add the library with Maven or Gradle
-* write your first pipeline
-* customize your steps
-* implement your own pipeline's context
-* parallelize some steps
+* [Add the library with Maven or Gradle](#add-the-library-with-maven-or-gradle)
+* [Write your first pipeline](#write-your-first-pipeline)
+* [Customize your steps](#customize-your-steps)
+* [Implement your own pipeline's context](#create-a-pipeline-context)
+* [Parallelize some steps](#parallelize-some-steps)
 
 ### Add the library with Maven or Gradle
 
@@ -119,9 +119,9 @@ public class MyFirstPipeline {
 
 ## Customize your steps
 
-Pipeline steps are function that take a PipelineContext implementation in argument and return a Mono of this implementation.
+Pipeline steps are functions that takes a PipelineContext implementation in argument and return a Mono of this implementation.
 
-You can use lambda, like in this example :
+You can use **lambda**, like in this example :
 
 ```java
 PipelineStep<SimpleContext> selectProduct = c -> Mono.fromCallable(() -> {
@@ -135,7 +135,7 @@ pipeline(
 )
 ```
 
-Or you may prefer function references :
+Or you may prefer **function references** :
 
 ```java
 //In shoppingCartService's class
@@ -151,7 +151,7 @@ pipeline(
 )
 ```
 
-You may use non reactive lambda for some steps : 
+You may also use **non-reactive lambda** for some steps : 
 
 ```java
 ...
@@ -167,7 +167,7 @@ pipeline(
 )
 ```
 
-This may be useful if you have a non reactive service to call :
+This may at last be useful if you have a **non reactive service** to call :
 
 ```java
 //In confirmationService's class
@@ -187,21 +187,21 @@ pipeline(
 )
 ```
 
-Note that you will have to cast it to `Sync<SimpleContext>`.
+> Note that you will have to cast it to `Sync<SimpleContext>`.
 
 ## Create a pipeline context
 
 A pipeline context is an object that implements [PipelineContext](hps.tools.reactive.pipelines.PipelineContext).
 
-The `failFast()` method is used to brake the pipeline when a step finishes by returning a 'false' to this method. 
+The `failFast()` method is used to brake the pipeline when a step finishes by returning 'false' to this method. 
 
-The way you store the data in your context is your mind, but you can start with [SimpleContext](src/main/java/hps/tools/reactive/pipelines/SimpleContext.java).
+The way you store the data in your context is up to you, but you can start with [SimpleContext](src/main/java/hps/tools/reactive/pipelines/SimpleContext.java).
 
-Be careful to use threadsafe implementation of this interface, even in non parallel pipelines.
+Be careful to use *threadsafe implementation* of this interface, even in non parallel pipelines.
 
 ### Parallelize some steps
 
-You may parallelize some steps and compose beautiful pipelines : 
+You may parallelize some steps and compose elegant pipelines : 
 
 ```java
 import static hps.tools.reactive.pipelines.PipelineUtils.parallelize;
