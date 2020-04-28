@@ -32,6 +32,6 @@ public interface Sync<T extends PipelineContext> extends PipelineStep<T> {
 
     @Override
     default Mono<T> execute(T controlContext) {
-        return Mono.just(executeSyncronously(controlContext));
+        return Mono.fromCallable(() -> executeSyncronously(controlContext));
     }
 }
